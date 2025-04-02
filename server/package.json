@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/main.js",
-    "dev": "nodemon -r dotenv/config -experimental-json-modules src/main.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/main.js"
   },
   "author": "Khushal Sinhmar",
   "license": "ISC",
