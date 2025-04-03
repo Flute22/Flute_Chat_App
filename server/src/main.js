@@ -11,7 +11,7 @@ dotenv.config(
 
 connectDB()
     .then( () => {
-        let port = process.env.PORT;
+        let port = process.env.PORT || 4000;
         app.listen( port, () => {
             console.log("\nServer is running on port: ", port);
         } );
