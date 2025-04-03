@@ -8,9 +8,11 @@ import { useState } from "react";
 import { apiClient } from "../../lib/api-client";
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
+import { userAppStore } from "../../store/index";
 
 function Auth() {
   const navigate = useNavigate();
+  const { setUserInfo } = userAppStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -69,6 +71,7 @@ function Auth() {
       );
 
       if ( response.data.data.user._id ) {
+        setUserInfo( response.data.data.user )
         if ( response.data.data.user.profileSetup ) {
           navigate("/chat")
         } else navigate("/profile")
@@ -90,6 +93,7 @@ function Auth() {
       );
 
       if ( response.status === 201 ) {
+        setUserInfo( response.data.data.user )
         navigate("/profile");
       }
 
