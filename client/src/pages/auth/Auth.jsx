@@ -93,7 +93,7 @@ function Auth() {
       );
 
       if (response.status === 201) {
-        setUserInfo(response.data.data.user);
+        setUserInfo(response.data.data);
         navigate("/profile");
       }
 

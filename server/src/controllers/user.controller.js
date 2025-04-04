@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const generateAccessAndRefreshToken = async (user_id) => {
     try {
@@ -146,18 +147,17 @@ const loginUser = asyncHandler(async (req, res) => {
         );
 });
 
-const getUserInfo = asyncHandler(async ( req, res ) => {
-    const user = await User.findById( req.user._id ).select("-password -refreshToken");
+const getUserInfo = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id).select(
+        "-password -refreshToken"
+    );
 
-    if ( !user ) throw new ApiError(404, "User not found");
+    if (!user) throw new ApiError(404, "User not found");
 
     return res
         .status(200)
-        .json(
-            new ApiResponse(200, user, "User info fetched successfully")
-        );
-} );
-
+        .json(new ApiResponse(200, user, "User info fetched successfully"));
+});
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
     const refreshToken = req.cookies?.refreshToken;
@@ -179,13 +179,12 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         { expiresIn: "15m" }
     );
 
-    res
-        .cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "Lax",
-            maxAge: 15 * 60 * 1000, // 15 minutes
-        })
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: 15 * 60 * 1000, // 15 minutes
+    })
         .status(200)
         .json({
             success: true,
@@ -193,8 +192,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         });
 });
 
-
-const updateProfile = asyncHandler( async (req, res) => {
+const updateProfile = asyncHandler(async (req, res) => {
     // Steps for update profile:
     /* 
         1. Get the user details form frontend
@@ -204,47 +202,119 @@ const updateProfile = asyncHandler( async (req, res) => {
         5. return the response
     */
 
-        // Get the user details form frontend
-        const { firstName, lastName, color } = req.body;
+    // Get the user details form frontend
+    const { firstName, lastName, color } = req.body;
 
-        // Validation - not empty
-        if (
-            [ firstName, lastName ].some(
-                (field) => typeof field !== "string" || field.trim() === ""
-            )
-        ) {
-            throw new ApiError(400, "All fields are required");
-        }
+    // Validation - not empty
+    if (
+        [firstName, lastName].some(
+            (field) => typeof field !== "string" || field.trim() === ""
+        )
+    ) {
+        throw new ApiError(400, "All fields are required");
+    }
 
-        //Check if user exists: email
-        const user = await User.findByIdAndUpdate(
-            req.user._id,
+    //Check if user exists: email
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
 
-            {
-                $set: {
-                    firstName,
-                    lastName,
-                    color,
-                    profileSetup: true,
-                }
+        {
+            $set: {
+                firstName,
+                lastName,
+                color,
+                profileSetup: true,
             },
+        },
 
-            {
-                new: true,
-                runValidators: true
-            }
-        ).select("-password -refreshToken")
+        {
+            new: true,
+            runValidators: true,
+        }
+    ).select("-password -refreshToken");
 
-        if ( !user ) throw new ApiError(404, "User not found");
+    if (!user) throw new ApiError(404, "User not found");
 
-        // return the response
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(200, user, "User profile updated successfully")
-            );
+    // return the response
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "User profile updated successfully"));
+});
 
-})
+const updateProfileImage = asyncHandler(async (req, res) => {
+    // Get the user details form frontend
+    const profileImageLocalPath = req.file?.path;
+
+    // Validation - not empty
+    if (!profileImageLocalPath)
+        throw new ApiError(400, "Profile image is missing");
+
+    // Upload image on cloudinary
+    const profileImage = await uploadOnCloudinary(profileImageLocalPath);
+
+    if (!profileImage.url) throw new ApiError(400, "Profile image is missing");
+
+    //Check if user exists: email
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+
+        {
+            $set: {
+                image: profileImage.url,
+            },
+        },
+
+        {
+            new: true,
+            runValidators: true,
+        }
+    ).select("-password -refreshToken");
+
+    if (!user) throw new ApiError(404, "User not found");
+
+    // return the response
+    return res
+        .status(200)
+        .json(
+            new ApiResponse( 200, user, "User profile image updated successfully" )
+        );
+});
 
 
-export { registerUser, loginUser, getUserInfo, refreshAccessToken, updateProfile};
+const removeProfileImage = asyncHandler( async (req, res) => {
+    //Check if user exists: email  
+    const user = await User.findByIdAndUpdate(
+        req?.user._id,
+
+        {
+            $set: {
+                image: null,
+            },
+        },
+
+        {
+            new: true,
+            runValidators: true,
+        }
+    ).select("-password -refreshToken");
+    
+    if (!user) throw new ApiError(404, "User not found");
+    
+    // return the response
+    return res
+        .status(200)
+        .json(
+            new ApiResponse( 200, user, "User profile image removed successfully" )
+        );
+} );
+
+
+export {
+    registerUser,
+    loginUser,
+    getUserInfo,
+    refreshAccessToken,
+    updateProfile,
+    updateProfileImage,
+    removeProfileImage,
+};
