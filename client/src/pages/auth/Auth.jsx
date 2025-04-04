@@ -70,11 +70,11 @@ function Auth() {
         }
       );
 
-      if ( response.data.data.user._id ) {
-        setUserInfo( response.data.data.user )
-        if ( response.data.data.user.profileSetup ) {
-          navigate("/chat")
-        } else navigate("/profile")
+      if (response.data.data.user._id) {
+        setUserInfo(response.data.data.user);
+        if (response.data.data.user.profileSetup) {
+          navigate("/chat");
+        } else navigate("/profile");
       }
 
       console.log({ response });
@@ -92,8 +92,8 @@ function Auth() {
         }
       );
 
-      if ( response.status === 201 ) {
-        setUserInfo( response.data.data.user )
+      if (response.status === 201) {
+        setUserInfo(response.data.data.user);
         navigate("/profile");
       }
 
@@ -205,8 +205,7 @@ function Auth() {
         </div>
 
         <div className="hidden xl:flex justify-center items-center">
-          <img src={ signup } alt="background login" className="h-fit" />
-          
+          <img src={signup} alt="background login" className="h-fit" />
         </div>
       </div>
     </div>

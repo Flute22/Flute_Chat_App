@@ -158,4 +158,93 @@ const getUserInfo = asyncHandler(async ( req, res ) => {
         );
 } );
 
-export { registerUser, loginUser, getUserInfo };
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+        throw new ApiError(401, "Refresh Token missing");
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await User.findById(decoded._id);
+    if (!user || user.refreshToken !== refreshToken) {
+        throw new ApiError(401, "Invalid Refresh Token");
+    }
+
+    const accessToken = jwt.sign(
+        { _id: user._id },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "15m" }
+    );
+
+    res
+        .cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Lax",
+            maxAge: 15 * 60 * 1000, // 15 minutes
+        })
+        .status(200)
+        .json({
+            success: true,
+            message: "Access token refreshed successfully",
+        });
+});
+
+
+const updateProfile = asyncHandler( async (req, res) => {
+    // Steps for update profile:
+    /* 
+        1. Get the user details form frontend
+        2. Validation - not empty
+        3. Check if user exists: email
+        4. Update the user
+        5. return the response
+    */
+
+        // Get the user details form frontend
+        const { firstName, lastName, color } = req.body;
+
+        // Validation - not empty
+        if (
+            [ firstName, lastName ].some(
+                (field) => typeof field !== "string" || field.trim() === ""
+            )
+        ) {
+            throw new ApiError(400, "All fields are required");
+        }
+
+        //Check if user exists: email
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+
+            {
+                $set: {
+                    firstName,
+                    lastName,
+                    color,
+                    profileSetup: true,
+                }
+            },
+
+            {
+                new: true,
+                runValidators: true
+            }
+        ).select("-password -refreshToken")
+
+        if ( !user ) throw new ApiError(404, "User not found");
+
+        // return the response
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, user, "User profile updated successfully")
+            );
+
+})
+
+
+export { registerUser, loginUser, getUserInfo, refreshAccessToken, updateProfile};
