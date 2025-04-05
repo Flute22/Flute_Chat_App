@@ -147,6 +147,33 @@ const loginUser = asyncHandler(async (req, res) => {
         );
 });
 
+const logoutUser = asyncHandler( async (req, res) => {
+    // First remove the refresh token from the database
+    await User.findByIdAndUpdate(
+        req.user._id,
+
+        {
+            $set: { refreshToken: undefined }
+        },
+
+        {
+            new: true
+        }
+    )
+
+    // Then remove the refresh token from the cookie
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(200, {}, "User Logged Out"))
+} );
+
 const getUserInfo = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user._id).select(
         "-password -refreshToken"
@@ -312,6 +339,7 @@ const removeProfileImage = asyncHandler( async (req, res) => {
 export {
     registerUser,
     loginUser,
+    logoutUser,
     getUserInfo,
     refreshAccessToken,
     updateProfile,

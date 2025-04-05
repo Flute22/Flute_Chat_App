@@ -6,6 +6,7 @@ import {
     updateProfile,
     updateProfileImage,
     removeProfileImage,
+    logoutUser,
 } from "../controllers/user.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -18,5 +19,6 @@ router.route("/user-info").get(verifyJwt, getUserInfo);
 router.route("/update-profile").patch(verifyJwt, updateProfile);
 router.route("/add-profile-image").put(verifyJwt, upload.single("profile-image"), updateProfileImage);
 router.route("/delete-profile-image").delete(verifyJwt, removeProfileImage);
+router.route("/logout").post(verifyJwt, logoutUser);
 
 export { router };
