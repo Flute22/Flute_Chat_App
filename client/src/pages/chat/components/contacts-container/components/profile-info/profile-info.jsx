@@ -70,7 +70,7 @@ function ProfileInfo() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>  
-                <FiEdit2 className="text-purple-500 text-xl font-medium " 
+                <FiEdit2 className="text-purple-500 text-xl font-medium" 
                 onClick={ () => navigate("/profile") }
                 /> 
             </TooltipTrigger>

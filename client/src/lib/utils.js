@@ -1,7 +1,6 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge"
 import animationData from "@/assets/lottie-json"
-import animationData from "@/assets/lottie-json"
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));

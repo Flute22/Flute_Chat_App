@@ -22,9 +22,11 @@ app.use(express.static("public"));
 
 // Routes Import
 import { router as userRoute } from "./routes/user.route.js";
+import { router as contactRoute } from "./routes/contact.route.js";
 
 // Routes Declaration
 app.use("/api/v1/users", userRoute);
+app.use("/api/v1/contacts", contactRoute);
 
 
 export { app };

@@ -1,6 +1,7 @@
 import React from "react";
 import Logo from "../../../../assets/flute1.jpeg";
 import ProfileInfo from "./components/profile-info/profile-info";
+import NewDM from "./components/new-dm/new-dm";
 
 function ContactsContainer() {
   return (
@@ -13,6 +14,7 @@ function ContactsContainer() {
       <div className="my-5">
         <div className="flex items-center justify-between pr-10">
           <Title text="Direct Messages" />
+          <NewDM />
         </div>
       </div>
 

@@ -89,12 +89,13 @@ function Auth() {
         {
           email,
           password,
-        }
+        },
+
       );
 
       if (response.status === 201) {
         setUserInfo(response.data.data);
-        navigate("/profile");
+        navigate("/profile"); 
       }
 
       console.log({ response });

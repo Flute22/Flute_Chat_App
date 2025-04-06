@@ -186,38 +186,6 @@ const getUserInfo = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, user, "User info fetched successfully"));
 });
 
-const refreshAccessToken = asyncHandler(async (req, res) => {
-    const refreshToken = req.cookies?.refreshToken;
-
-    if (!refreshToken) {
-        throw new ApiError(401, "Refresh Token missing");
-    }
-
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-
-    const user = await User.findById(decoded._id);
-    if (!user || user.refreshToken !== refreshToken) {
-        throw new ApiError(401, "Invalid Refresh Token");
-    }
-
-    const accessToken = jwt.sign(
-        { _id: user._id },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "15m" }
-    );
-
-    res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
-        maxAge: 15 * 60 * 1000, // 15 minutes
-    })
-        .status(200)
-        .json({
-            success: true,
-            message: "Access token refreshed successfully",
-        });
-});
 
 const updateProfile = asyncHandler(async (req, res) => {
     // Steps for update profile:
@@ -341,7 +309,6 @@ export {
     loginUser,
     logoutUser,
     getUserInfo,
-    refreshAccessToken,
     updateProfile,
     updateProfileImage,
     removeProfileImage,
