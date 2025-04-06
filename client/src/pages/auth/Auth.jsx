@@ -91,6 +91,10 @@ function Auth() {
           password,
         },
 
+        {
+          withCredentials: true,
+        }
+
       );
 
       if (response.status === 201) {

@@ -78,9 +78,19 @@ const registerUser = asyncHandler(async (req, res) => {
         "-password -refreshToken"
     );
 
+    // Access and Refresh token
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+        user._id
+    );
+    const loggedInUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    );
+
     // return the response
     return res
         .status(201)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
         .json(
             new ApiResponse(201, createdUser, "User Registered Successfully🥂")
         );
