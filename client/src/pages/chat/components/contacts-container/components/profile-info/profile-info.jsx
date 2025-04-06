@@ -62,7 +62,7 @@ function ProfileInfo() {
         <div>
           {userInfo.firstName && userInfo.lastName
             ? `${userInfo.firstName} ${userInfo.lastName}`
-            : ""}
+            : userInfo.email}
         </div>
       </div>
 

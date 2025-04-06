@@ -22,8 +22,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SEARCH_CONTACTS } from "../../../../../../utils/constants";
 import { apiClient } from "../../../../../../lib/api-client";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { userAppStore } from "../../../../../../store/index";
 
 function NewDM() {
+  const { setSelectChatType, setSelectChatData } = userAppStore();
   const [openNewContactModel, setOpenNewContactModel] = useState(false);
   const [searchedContacts, setSearchedContacts] = useState([]);
 
@@ -49,8 +51,11 @@ function NewDM() {
   };
 
 
-  const selectNewContact = () => {
+  const selectNewContact = (contact) => {
     setOpenNewContactModel(false);
+    setSelectChatType("contact");
+    setSelectChatData(contact);
+    setSearchedContacts([])
   }
 
   return (
@@ -94,6 +99,7 @@ function NewDM() {
                   <div
                     key={contact._id}
                     className="flex gap-3 items-center cursor-pointer"
+                    onClick={() => selectNewContact(contact)}
                   >
                     <div className="flex items-center gap-5 w-full relative">
                       <Avatar

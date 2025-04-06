@@ -32,9 +32,6 @@ const searchContacts = asyncHandler(async (req, res) => {
             },
         ],
     });
-
-    console.log("Search Request Received from:", req.user.id);
-    console.log("Search Term:", searchTerm);
     
     return res
         .status(200)

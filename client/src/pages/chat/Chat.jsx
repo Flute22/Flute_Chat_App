@@ -8,7 +8,7 @@ import EmptyChatContainer from "./components/empty-chat-container/empty-chat-con
 
 
 function Chat() {
-  const { userInfo } = userAppStore();  
+  const { userInfo, selectedChatType } = userAppStore();  
   const navigate = useNavigate();
 
   useEffect( () => {
@@ -21,8 +21,9 @@ function Chat() {
   return (
     <div className="flex h-[100vh] text-white overflow-hidden">
       <ContactsContainer />
-      {/* <EmptyChatContainer /> */}
-      <ChatContainer />
+      {
+        selectedChatType === undefined ? <EmptyChatContainer /> : <ChatContainer />
+      }
     </div>
   )
 }
