@@ -12,7 +12,7 @@ function EmptyChatContainer() {
         options={ animationDefaultOptions }
       />
 
-      <div className="text-opacity-80 text-white flex flex-col gap-5 items-center mt-10 lg:text-4xl text-3xl transition-all duration-100"> 
+      <div className="text-opacity-80 text-white flex flex-col gap-5 items-center mt-10 lg:text-4xl text-2xl transition-all duration-100"> 
         <h3 className="host-grotesk-medium">
           Hi 
           <span className="text-purple-500">! </span>

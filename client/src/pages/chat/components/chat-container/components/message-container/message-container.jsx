@@ -1,11 +1,30 @@
 import React, { useEffect, useRef } from "react";
 import moment from "moment";
 import { userAppStore } from "../../../../../../store";
+import { GET_MESSAGES } from "../../../../../../utils/constants";
+import { apiClient } from "../../../../../../lib/api-client";
 
 function MessageContainer() {
   const scrollRef = useRef();
-  const { selectedChatType, selectedChatData, userInfo, selectedChatMessages } =
+  const { selectedChatType, selectedChatData, userInfo, selectedChatMessages, setSelectedChatMessages } =
     userAppStore();
+
+    useEffect( () => {
+      const getMessages = async () => {
+        try {
+          const response = await apiClient.post( GET_MESSAGES, { _id: selectedChatData._id }, { withCredentials: true } );
+          if ( response.status === 200 && response.data.data) {
+            setSelectedChatMessages(response.data.data);
+          }
+
+        } catch (error) {
+          console.log("Error while fetching messages", error);
+        }
+      };
+      if (selectedChatData._id) {
+        if( selectedChatType === "contact") getMessages();
+      }
+    }, [ selectedChatData, selectedChatType, setSelectedChatMessages ])
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -41,9 +60,9 @@ function MessageContainer() {
           <div
             className={`${
               isMyMessage
-                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff/50] ml-auto"
-                : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff/20] mr-auto"
-            } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+                ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50 ml-auto"
+                : "bg-[#2a2b33]/5 text-white/80 border-white/20 mr-auto"
+            } border inline-block p-2 rounded my-2 max-w-[50%] break-words`}
           >
             {message.content}
           </div>
