@@ -91,55 +91,58 @@ function NewDM() {
               }}
             />
           </div>
+          {
+            searchedContacts.length > 0 && (
+            <ScrollArea className="h-[250px] w-[350px] rounded-md p-4">
+              <div className="flex flex-col gap-5">
+                {searchedContacts.map((contact) => {
+                  return (
+                    <div
+                      key={contact._id}
+                      className="flex gap-3 items-center cursor-pointer"
+                      onClick={() => selectNewContact(contact)}
+                    >
+                      <div className="flex items-center gap-5 w-full relative">
+                        <Avatar
+                          className={`h-12 w-12 flex items-center justify-center rounded-full overflow-hidden ${getColor(
+                            contact.color
+                          )}`}
+                        >
+                          {contact.image ? (
+                            <AvatarImage
+                              src={`${contact.image}`}
+                              alt="profile"
+                              className="object-cover w-full h-full bg-black"
+                            />
+                          ) : (
+                            <div className="uppercase w-10 h-10 text-lg flex items-center justify-center rounded-full">
+                              {contact.firstName
+                                ? contact.firstName.split("").shift()
+                                : contact.email.split("").shift()}
+                            </div>
+                          )}
+                        </Avatar>
 
-          <ScrollArea className="h-[250px] w-[350px] rounded-md p-4">
-            <div className="flex flex-col gap-5">
-              {searchedContacts.map((contact) => {
-                return (
-                  <div
-                    key={contact._id}
-                    className="flex gap-3 items-center cursor-pointer"
-                    onClick={() => selectNewContact(contact)}
-                  >
-                    <div className="flex items-center gap-5 w-full relative">
-                      <Avatar
-                        className={`h-12 w-12 flex items-center justify-center rounded-full overflow-hidden ${getColor(
-                          contact.color
-                        )}`}
-                      >
-                        {contact.image ? (
-                          <AvatarImage
-                            src={`${contact.image}`}
-                            alt="profile"
-                            className="object-cover w-full h-full bg-black"
-                          />
-                        ) : (
-                          <div className="uppercase w-10 h-10 text-lg flex items-center justify-center rounded-full">
-                            {contact.firstName
-                              ? contact.firstName.split("").shift()
-                              : contact.email.split("").shift()}
-                          </div>
-                        )}
-                      </Avatar>
-
-                      <div className="flex flex-col">
-                        <span className="flex">
-                          {contact.firstName && contact.lastName
-                            ? `${contact.firstName} ${contact.lastName}`
-                            : contact.email}
-                        </span>
-                        <span className="text-xs">{contact.email}</span>
+                        <div className="flex flex-col">
+                          <span className="flex">
+                            {contact.firstName && contact.lastName
+                              ? `${contact.firstName} ${contact.lastName}`
+                              : contact.email}
+                          </span>
+                          <span className="text-xs">{contact.email}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </ScrollArea>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+            )
+          }
 
           <div>
             {searchedContacts.length <= 0 ? (
-              <div className="flex-1 md:bg-[#181920] md:flex flex-col justify-center items-center duration-1000 transition-all">
+              <div className="flex-1 md:bg-[#181920] md:flex flex-col justify-center items-center mt-10 duration-1000 transition-all">
                 <Lottie
                   isClickToPauseDisabled={true}
                   height={100}
