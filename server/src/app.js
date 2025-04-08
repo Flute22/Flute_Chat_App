@@ -8,10 +8,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: [
-            process.env.ORIGIN,
-            "https://flute-chat.onrender.com/"  
-        ],
+        origin: process.env.ORIGIN,
             
         credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
