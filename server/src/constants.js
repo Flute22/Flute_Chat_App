@@ -1,1 +1,1 @@
-export const DB_NAME = "chat_app_database"
+export const DB_NAME = "flute_chat_app_database"
